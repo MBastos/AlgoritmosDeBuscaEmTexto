@@ -11,6 +11,7 @@ import static org.junit.Assert.*;
  * @author thiago.bispo
  */
 public class KmpTest {
+    
     Kmp kmp = new Kmp();
     
     public KmpTest() {
@@ -19,9 +20,13 @@ public class KmpTest {
     @Test
     public void testarPreProcessamento(){
         String padrao = "ababaca";
-        Integer [] resultadoCalculado = kmp.preProcessamento(padrao);
-        System.out.println(Arrays.asList(resultadoCalculado));
-        assertArrayEquals(new Integer[]{0,0,1,2,3,0,1}, resultadoCalculado);
+        int [] resultadoCalculado = kmp.preProcessamento(padrao);
+        StringBuilder sb = new StringBuilder();
+        for (int i:resultadoCalculado){
+            sb.append(i).append(" ");
+        }
+        System.out.println(sb.toString());
+        assertArrayEquals(new int[]{0,0,1,2,3,0,1}, resultadoCalculado);
     }
     @Before
     public void setUp() {

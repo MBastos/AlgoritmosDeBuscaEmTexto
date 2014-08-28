@@ -9,7 +9,11 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -44,6 +48,19 @@ public class FileIterator implements Iterator<String> {
             Logger.getLogger(FileIterator.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
+    }
+    
+   public List<String> lerTodas(){
+        List<String> lista= new ArrayList<>();
+        while(hasNext()){
+            lista.add(next());
+        }
+        try {
+            br.close();
+        } catch (IOException ex) {
+            Logger.getLogger(FileIterator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return lista;
     }
 
     @Override
