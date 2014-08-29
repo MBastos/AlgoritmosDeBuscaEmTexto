@@ -19,7 +19,7 @@ public class KmpTest {
     
     @Test
     public void testarPreProcessamento(){
-        String padrao = "ababaca";
+        String padrao = "ababaca";        
         int [] resultadoCalculado = kmp.preProcessamento(padrao);
         StringBuilder sb = new StringBuilder();
         for (int i:resultadoCalculado){
