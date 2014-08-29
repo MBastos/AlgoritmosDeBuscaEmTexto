@@ -19,11 +19,11 @@ public class FileIteratorTest {
     //Apenas exibe as linhas no arquivo de exemplo
     @Test
     public void testarListarArquivo(){
-        FileIterator f1 = new FileIterator("entrada.txt");
+        FileIterator f1 = new FileIterator("entrada2.txt");
         while(f1.hasNext()){
             System.out.println(f1.next());
         }
-    }
+    }  
     
     @Before
     public void setUp() {

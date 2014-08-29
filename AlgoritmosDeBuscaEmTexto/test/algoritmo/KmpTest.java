@@ -28,6 +28,20 @@ public class KmpTest {
         System.out.println(sb.toString());
         assertArrayEquals(new int[]{0,0,1,2,3,0,1}, resultadoCalculado);
     }
+    
+    @Test
+    public void testarPreProcessamentoMaiusculasMinusculas(){
+        
+        String padrao = "ababaca";                       
+        int [] resultadoCalculado = kmp.preProcessamentoLeila(padrao);
+        StringBuilder sb = new StringBuilder();
+        for (int i:resultadoCalculado){
+            sb.append(i).append(" ");
+        }
+        System.out.println(sb.toString());        
+        assertArrayEquals(new int[]{0,0,1,2,3,0,1}, resultadoCalculado);
+    }      
+    
     @Before
     public void setUp() {
     }
