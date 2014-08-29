@@ -29,8 +29,7 @@ public class Kmp extends AlgoritmoDeBusca {
                 next[i] = j + 1;
                 i++;
                 j++;
-            } else if (j > 0) 
-            {
+            } else if (j > 0) {
                 j = next[j - 1];
             } else { 
                 next[i] = 0;
