@@ -152,7 +152,7 @@ jp4.repaint();
     public static void main (String[] args){
          TelaPrincipal x = new TelaPrincipal();  
        x.setVisible(true);  
-       System.out.println(x.getDiretorio());
+      
        
     }  
 
