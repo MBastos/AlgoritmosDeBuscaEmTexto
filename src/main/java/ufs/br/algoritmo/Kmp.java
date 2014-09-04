@@ -6,22 +6,16 @@
 package ufs.br.algoritmo;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public class Kmp extends AlgoritmoDeBusca {
 
-    @Override
-    public List<Integer> buscar(String padrao, String texto) {
-        resetQtdComparacoes();
-        return new ArrayList<>();
-    }
-
-    public int[] preProcessamento(String padrao) {
-        int[] next = new int[padrao.length()];
-        next[0] = 0;
+    private int[] preProcessamento(String padrao) {
         int m = padrao.length();
+        int[] next = new int[m];
+        if (m > 0) {
+            next[0] = 0;
+        }
         int j = 0;
         int i = 1;
         while (i < m) {
@@ -38,63 +32,31 @@ public class Kmp extends AlgoritmoDeBusca {
         }
         return next;
     }
-     public int[] preProcessamentoLeila(String padrao) {
-        int[] next = new int[padrao.length()];        
-        int m = padrao.length();
-        int j = 0;                
-        next[0] = 0;                                            // Primeira letra não possui prefixo nem sufixo                         
-        for(int i = 1; i < m; i++){                             // O Algoritmo começa o pre-processamento a partir da segunda letra          
-            
-            if( padrao.charAt(j) == padrao.charAt(i)){          
-                next[i] = j+1;
-                j++;
-            }else{
-                while(padrao.charAt(j) != padrao.charAt(i) && j > 0){
-                    j = next[j-1];
-                } 
-            }
-        }             
-        return next;
-    }
 
-    public int KMPmatch(String texto, String padrao) {
+
+    @Override
+    public List<Integer> buscar(String padrao, String texto) {
+        resetQtdComparacoes();
         int n = texto.length();
         int m = padrao.length();
         int[] fail = preProcessamento(padrao);
         int i = 0;
         int j = 0;
+        List<Integer> listaPosicoes = new ArrayList<>();
         while (i < n) {
+            incQtdComparacoes();
             if (padrao.charAt(j) == texto.charAt(i)) {
-                if (j == m - 1) {                    
-                    return i - m + 1; 
+                if (j == m - 1) {
+                    listaPosicoes.add(i - m + 1);
                 }
                 i++;
-                j++;
+                j = ++j % m;
             } else if (j > 0) {
                 j = fail[j - 1];
             } else {
                 i++;
             }
         }
-        return -1;
+        return listaPosicoes;
     }
-    
-   
-    
-//    Algoritmo ComputaNext(P,m, next);
-//    {entrada: um padrão P de tamanho m
-//    saída: vetor next}
-//        inicio 
-//        next[1] := -1; next[2]:=0;
-//        para i:= 3 até m faça
-//        inicio
-//        j := next[i-1]+1;
-//        enquanto p[i-1] <> p[j] e j>0 faça 
-//        j = next[j]+1;;
-//        next[i] := j; 
-//        fim
-//        fim
-    
-    
-    
 }
