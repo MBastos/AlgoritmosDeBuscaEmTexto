@@ -7,6 +7,7 @@
 package ufs.br.algoritmo;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ForcaBruta extends AlgoritmoDeBusca{
@@ -14,6 +15,9 @@ public class ForcaBruta extends AlgoritmoDeBusca{
     @Override
     public List<Integer> buscar(String padrao, String texto) {
         resetQtdComparacoes();
+        if (texto.isEmpty()){
+            return Collections.EMPTY_LIST;
+        }
         int n = texto.length();
         int m = padrao.length();
         List<Integer> posicoes = new ArrayList<>();

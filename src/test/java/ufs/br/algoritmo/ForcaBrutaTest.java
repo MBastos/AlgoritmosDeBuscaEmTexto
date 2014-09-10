@@ -24,7 +24,7 @@ public class ForcaBrutaTest {
         String texto  = "";
         String padrao = "";
         List<Integer> posicoes = algoritmo.buscar(padrao, texto);
-        Assert.assertEquals(1, posicoes.size());
+        Assert.assertEquals(0, posicoes.size());
         System.out.println("## Comparações: " + algoritmo.getQtdComparacoes());
     }
     //Teste unitário com valores de fronteira

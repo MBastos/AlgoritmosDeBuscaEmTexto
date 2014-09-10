@@ -8,35 +8,32 @@ package ufs.br.algoritmo;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BoyerMoore extends AlgoritmoDeBusca {
+public class BoyerMooreCopia extends AlgoritmoDeBusca {
 
     @Override
-    public List<Integer> buscar(String p, String t) {
+    public List<Integer> buscar(String padrao, String texto) {
         resetQtdComparacoes();
-        resetQtdComparacoes();
+        return new ArrayList<>();
+    }
+
+    /**
+     * Funcao buscaPadrao
+     *
+     * @param t
+     * @param p *
+     */
+    public int buscaPadrao(String t, String p) {
         char[] texto = t.toCharArray();
         char[] padrao = p.toCharArray();
-        List<Integer> posicoes = new ArrayList<>();
-        int pos = indexador(texto, padrao);
-        if (pos == -1) {
-            return posicoes;
-        }
-        posicoes.add(pos);
-        int acc = pos + padrao.length;
-        texto = t.substring(pos + padrao.length).toCharArray();
-        while ((pos = indexador(texto, padrao)) != -1) {
-            posicoes.add(acc += pos);
-            texto = t.substring(acc += padrao.length).toCharArray();
-        }
-        return posicoes;
+        return indexador(texto, padrao);
     }
 
     /**
      * Funcao para calcular o indice do padrao do sufixo *
      */
-    private int indexador(char[] texto, char[] padrao) {
+    public int indexador(char[] texto, char[] padrao) {
         if (padrao.length == 0) {
-            return -1;
+            return 0;
         }
         int tabelaDeCaracteres[] = fazTabelaDeCaracteres(padrao);
         int tabelaDeDeslocamento[] = fazTabelaDeDeslocamento(padrao);
@@ -103,8 +100,7 @@ public class BoyerMoore extends AlgoritmoDeBusca {
     }
 
     /**
-     * Funcao que retorna o tamanho maximo do sufixo em p que tambem eh prefixo
-     * *
+     * Funcao que retorna o tamanho maximo do sufixo em p que tambem eh prefixo *
      */
     private static int tamanhoSufixo(char[] padrao, int p) {
         int tam = 0;
