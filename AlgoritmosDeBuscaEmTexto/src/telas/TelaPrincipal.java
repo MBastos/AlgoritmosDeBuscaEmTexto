@@ -4,6 +4,7 @@
  */
 package telas;
 
+import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -32,8 +33,10 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.general.Dataset;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
@@ -158,49 +161,38 @@ public class TelaPrincipal extends JFrame implements ActionListener {
 
     }
 
-private XYDataset createDataset() {
-    //Comparações x Padrões Encontrados
-       final XYSeries kmp = new XYSeries("KMP");
-      kmp.add(0, 0);
-      kmp.add(10, 1);
-      kmp.add(30, 2);
-      kmp.add(50, 3);     
-      kmp.add(100, 4);
+private DefaultCategoryDataset createDataset() {
+    DefaultCategoryDataset ds = new DefaultCategoryDataset();  
+    //Numero de Comparações, Método usado, Padrão Utilizado
+    ds.addValue(10, "KMP", "Padrão1");
+    ds.addValue(20, "KMP", "Padrão2");
+    ds.addValue(40, "KMP", "Padrão3");
+    ds.addValue(50, "Força Bruta", "Padrão1");
+    ds.addValue(60, "Força Bruta", "Padrão2");
+    ds.addValue(100, "Força Bruta", "Padrão3");
+    ds.addValue(3, "Boyer Moore", "Padrão1");
+    ds.addValue(25, "Boyer Moore", "Padrão2");
+    ds.addValue(70, "Boyer Moore", "Padrão3");
      
-      final XYSeries fb= new XYSeries("Força Bruta");
-      fb.add(0,0);
-      fb.add(40, 1);
-      fb.add(80, 2);
-      fb.add(150, 3);
-      fb.add(200, 4);
+ 
     
-     
-      final XYSeries bm = new XYSeries("Boyer Moore");
-      bm.add(0, 0);
-      bm.add(4, 1);
-      bm.add(30, 2);
-      bm.add(40, 3);
-     bm.add(90, 4);
-     
-      final XYSeriesCollection dataset = new XYSeriesCollection();
-      dataset.addSeries(kmp);
-      dataset.addSeries(fb);
-      dataset.addSeries(bm);
-     
-      return dataset;
+        return ds;
     }
 
     public void geradorGrafico() {
         
-       XYDataset cds = createDataset(); 
+       DefaultCategoryDataset cds = createDataset(); 
         String titulo = "Gráfico de Tipo";
-        String eixoy = "Padrões Encontrados";
-        String txt_legenda = "Comparações";
+        String eixoy = "Comparações";
+        String txt_legenda = "Padrões Encontrados";
         boolean legenda = true;
         boolean tooltips = true;
         boolean urls = true;
-        JFreeChart grafico = ChartFactory.createXYLineChart(titulo, txt_legenda, eixoy, cds);
-      
+        JFreeChart grafico = ChartFactory.createLineChart(titulo, txt_legenda, eixoy, cds);
+       CategoryItemRenderer renderer =grafico.getCategoryPlot().getRenderer();  
+       renderer.setSeriesPaint( 0, Color.RED );  
+       renderer.setSeriesPaint( 1, Color.YELLOW );  
+       renderer.setSeriesPaint( 2, Color.blue );  
         ChartPanel myChartPanel = new ChartPanel(grafico, true);
         myChartPanel.setSize(jp4.getWidth(), jp4.getHeight());
         myChartPanel.setVisible(true);
