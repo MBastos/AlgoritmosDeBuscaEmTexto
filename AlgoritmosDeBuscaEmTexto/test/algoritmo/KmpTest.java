@@ -2,6 +2,7 @@ package algoritmo;
 
 import java.util.Arrays;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -17,7 +18,7 @@ public class KmpTest {
     public KmpTest() {
     }
     
-    @Test
+    //@Test
     public void testarPreProcessamento(){
         String padrao = "ababaca";        
         int [] resultadoCalculado = kmp.preProcessamento(padrao);
@@ -29,9 +30,8 @@ public class KmpTest {
         assertArrayEquals(new int[]{0,0,1,2,3,0,1}, resultadoCalculado);
     }
     
-    @Test
+    //@Test
     public void testarPreProcessamentoMaiusculasMinusculas(){
-        
         String padrao = "ababaca";                       
         int [] resultadoCalculado = kmp.preProcessamentoLeila(padrao);
         StringBuilder sb = new StringBuilder();
@@ -40,7 +40,15 @@ public class KmpTest {
         }
         System.out.println(sb.toString());        
         assertArrayEquals(new int[]{0,0,1,2,3,0,1}, resultadoCalculado);
-    }      
+    }     
+    
+    @Test
+    public void testarBuscaComPadraoExistenteEmTexto(){
+        String texto = "thiago";
+        String padrao = "ag";
+        int pos = kmp.KMPmatch(texto, padrao);
+        Assert.assertEquals(3, pos);
+    }
     
     @Before
     public void setUp() {
