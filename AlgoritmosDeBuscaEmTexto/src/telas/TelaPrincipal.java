@@ -18,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -130,7 +131,7 @@ public class TelaPrincipal extends JFrame implements ActionListener {
         }
         if (e.getSource() == jb_executar) {
             if (jt_carregar.getText().trim().isEmpty()) {
-                System.out.println("vazio");
+               JOptionPane.showMessageDialog(null, "Diretório Vazio!!!",null,JOptionPane.ERROR_MESSAGE);
                 
                 
 
