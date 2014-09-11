@@ -32,6 +32,10 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Highlighter;
+import javax.swing.text.Highlighter.HighlightPainter;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -49,7 +53,7 @@ import ufs.br.util.FileIterator;
  * @author Jomar
  */
 public class TelaPrincipal extends JFrame implements ActionListener {
-
+    
     JButton carregarJButton, executarJButton;
     private String diretorio;
     JPanel graficosPanel;
@@ -61,7 +65,7 @@ public class TelaPrincipal extends JFrame implements ActionListener {
     JTextArea padraoTextArea = new JTextArea();
     JScrollPane textoScrollPane;
     JScrollPane padraoScrollPane;
-
+    
     public TelaPrincipal() {
         try {
             UIManager.setLookAndFeel("com.jtattoo.plaf.bernstein.BernsteinLookAndFeel");
@@ -109,15 +113,15 @@ public class TelaPrincipal extends JFrame implements ActionListener {
         textoScrollPane.setViewportView(arquivoTextArea);
         padraoScrollPane.setViewportView(padraoTextArea);
         arquivoTextArea.setEditable(false);
-
+        
         opcoesTabbebPane.add(abrirArquivoJPanel);
         opcoesTabbebPane.add(textoScrollPane);
         opcoesTabbebPane.add(padraoScrollPane);
         opcoesTabbebPane.add(graficosPanel);
         add(opcoesTabbebPane);
-
+        
     }
-
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         JFileChooser chooser;
@@ -131,47 +135,49 @@ public class TelaPrincipal extends JFrame implements ActionListener {
                 carregarTextField.setText(nomeArq);
                 this.setDiretorio(nomeArq);
             }
-
+            
         }
         if (e.getSource() == executarJButton) {
             if (carregarTextField.getText().trim().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Diretório Vazio!!!", null, JOptionPane.ERROR_MESSAGE);
-
+                
             } else {
                 setDiretorio(carregarTextField.getText());
                 escreverTxt(getDiretorio());
                 carregarTextField.setEditable(false);
                 geradorGrafico();
             }
-
+            
         }
-
+        
     }
-
+    
     public void setDiretorio(String diretorio) {
         this.diretorio = diretorio;
-
+        
     }
-
+    
     public String getDiretorio() {
         return diretorio;
-
+        
     }
-
+    
     private DefaultCategoryDataset createDataset() {
         DefaultCategoryDataset ds = new DefaultCategoryDataset();
-        
+
         //Numero de Comparações, Método usado, Padrão Utilizado
         FileIterator fi = new FileIterator(getDiretorio());
         List<String> padroes = EscolhedorDePadroes.escolher(fi);
-        
+        List<Integer> posicoesPadrao = new ArrayList<Integer>();
         AlgoritmoDeBusca[] algoritmos = new AlgoritmoDeBusca[]{new ForcaBruta(), new Kmp(), new BoyerMoore()};
         String[] nomes = new String[]{"Força bruta", "KMP", "Boyer Moore"};
         padraoTextArea.setText(null);
         List<String> pad = new ArrayList<String>();
+        boolean flag = false;
         for (int i = 0; i < algoritmos.length; i++) {
             for (String padrao : padroes) {
-                if (!pad.contains(padrao)){
+                posicoesPadrao.clear();
+                if (!pad.contains(padrao)) {
                     padraoTextArea.append(padrao);
                     padraoTextArea.append("\n");
                     pad.add(padrao);
@@ -180,16 +186,20 @@ public class TelaPrincipal extends JFrame implements ActionListener {
                 fi = new FileIterator(getDiretorio());
                 String linha;
                 while ((linha = fi.next()) != null) {
-                    algoritmos[i].buscar(padrao, linha);
+                    posicoesPadrao.addAll(algoritmos[i].buscar(padrao, linha));
                     qtd += algoritmos[i].getQtdComparacoes();
                 }
                 ds.addValue(qtd, nomes[i], padrao);
+                if (!flag) {
+                    destaquePadraoNoTexto(padrao, posicoesPadrao);
+                }
             }
+            flag = true;
         }
         padraoTextArea.setEditable(false);
         return ds;
     }
-
+    
     public final void geradorGrafico() {
         DefaultCategoryDataset cds = createDataset();
         String titulo = "Gráfico de comparações";
@@ -211,7 +221,19 @@ public class TelaPrincipal extends JFrame implements ActionListener {
         graficosPanel.revalidate();
         graficosPanel.repaint();
     }
-
+    
+    private void destaquePadraoNoTexto(String padrao, List<Integer> posicoes) {
+//        Highlighter highlighter = arquivoTextArea.getHighlighter();
+//        HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.pink);
+//        for (Integer pos: posicoes){
+//            try {
+//                highlighter.addHighlight(pos, pos + padrao.length(), painter);
+//            } catch (BadLocationException ex) {
+//                Logger.getLogger(TelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
+    }
+    
     public void escreverTxt(String f) {
         arquivoTextArea.setText(null);
         File file = new File(f);
@@ -228,10 +250,9 @@ public class TelaPrincipal extends JFrame implements ActionListener {
             System.out.println(ioe);
         }
     }
-
+    
     public static void main(String[] args) {
         TelaPrincipal x = new TelaPrincipal();
         x.setVisible(true);
-
     }
 }
