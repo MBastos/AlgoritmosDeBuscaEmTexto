@@ -13,6 +13,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
@@ -41,6 +43,12 @@ import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import ufs.br.algoritmo.AlgoritmoDeBusca;
+import ufs.br.algoritmo.BoyerMoore;
+import ufs.br.algoritmo.ForcaBruta;
+import ufs.br.algoritmo.Kmp;
+import ufs.br.util.EscolhedorDePadroes;
+import ufs.br.util.FileIterator;
 
 /**
  *
@@ -48,14 +56,14 @@ import org.jfree.data.xy.XYSeriesCollection;
  */
 public class TelaPrincipal extends JFrame implements ActionListener {
 
-    JButton jb_carregar, jb_executar;
+    JButton carregarBtn, executarBtn;
     private String diretorio;
     JPanel jp4;
-    JTextField jt_carregar;
+    JTextField carregarTextField;
     private DefaultCategoryDataset dados;
     private JFreeChart grafico;
     ChartPanel myChartPanel = new ChartPanel(grafico, true);
-    JTextArea ja = new JTextArea();
+    JTextArea arquivoTextArea = new JTextArea();
     JScrollPane jp3;
 
     public TelaPrincipal() {
@@ -72,7 +80,7 @@ public class TelaPrincipal extends JFrame implements ActionListener {
         }
         FlowLayout layout = new FlowLayout();
         this.setTitle("Algoritmos de busca em texto");
-        this.setSize(800, 600);
+        this.setSize(1024, 780);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setVisible(true);
         JTabbedPane jtp = new JTabbedPane();
@@ -83,25 +91,25 @@ public class TelaPrincipal extends JFrame implements ActionListener {
         geradorGrafico();
 
         JLabel jl_carregar = new JLabel("Selecione o arquivo: ");
-        jt_carregar = new JTextField(40);
-
-        jb_carregar = new JButton("...");
-        jb_executar = new JButton("Executar");
-        jb_carregar.addActionListener(this);
-        jb_executar.addActionListener(this);
+        carregarTextField = new JTextField(40);
+        carregarTextField.setLocale(new Locale("pt", "BR"));
+        carregarBtn = new JButton("...");
+        executarBtn = new JButton("Executar");
+        carregarBtn.addActionListener(this);
+        executarBtn.addActionListener(this);
         jp1.setName("Abrir Arquivo");
         jp2.setName("Padrões");
         jp3.setName("Texto");
         jp4.setName("Gráficos");
         //Eventos Aba jp1
         jp1.add(jl_carregar);
-        jp1.add(jt_carregar);
-        jp1.add(jb_carregar);
-        jp1.add(jb_executar);
+        jp1.add(carregarTextField);
+        jp1.add(carregarBtn);
+        jp1.add(executarBtn);
         jp1.setLayout(layout);
         jp1.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-        jp3.setViewportView(ja);
-        ja.setEditable(false);
+        jp3.setViewportView(arquivoTextArea);
+        arquivoTextArea.setEditable(false);
 
         jtp.add(jp1);
         jtp.add(jp2);
@@ -115,26 +123,26 @@ public class TelaPrincipal extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         JFileChooser chooser;
         String nomeArq = null;
-        if (e.getSource() == jb_carregar) {
+        if (e.getSource() == carregarBtn) {
             chooser = new JFileChooser();
 
             //   chooser.showOpenDialog(this);
             if (chooser.showOpenDialog(this) == chooser.APPROVE_OPTION) {
                 File file = chooser.getSelectedFile();
                 nomeArq = file.toString();
-                jt_carregar.setText(nomeArq);
+                carregarTextField.setText(nomeArq);
                 this.setDiretorio(nomeArq);
             }
 
         }
-        if (e.getSource() == jb_executar) {
-            if (jt_carregar.getText().trim().isEmpty()) {
+        if (e.getSource() == executarBtn) {
+            if (carregarTextField.getText().trim().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Diretório Vazio!!!", null, JOptionPane.ERROR_MESSAGE);
 
             } else {
-                setDiretorio(jt_carregar.getText());
+                setDiretorio(carregarTextField.getText());
                 escreverTxt(getDiretorio());
-                jt_carregar.setEditable(false);
+                carregarTextField.setEditable(false);
                 this.repaint();
             }
 
@@ -154,17 +162,32 @@ public class TelaPrincipal extends JFrame implements ActionListener {
 
     private DefaultCategoryDataset createDataset() {
         DefaultCategoryDataset ds = new DefaultCategoryDataset();
+        
         //Numero de Comparações, Método usado, Padrão Utilizado
-        ds.addValue(10, "KMP", "Padrão1");
-        ds.addValue(20, "KMP", "Padrão2");
-        ds.addValue(40, "KMP", "Padrão3");
-        ds.addValue(50, "Força Bruta", "Padrão1");
-        ds.addValue(60, "Força Bruta", "Padrão2");
-        ds.addValue(100, "Força Bruta", "Padrão3");
-        ds.addValue(3, "Boyer Moore", "Padrão1");
-        ds.addValue(25, "Boyer Moore", "Padrão2");
-        ds.addValue(70, "Boyer Moore", "Padrão3");
-
+        FileIterator fi = new FileIterator("entrada.txt");
+        List<String> padroes = EscolhedorDePadroes.escolher(fi);
+        
+        AlgoritmoDeBusca forcaBruta = new ForcaBruta();
+        AlgoritmoDeBusca kmp = new Kmp();
+        AlgoritmoDeBusca boyerMoore = new BoyerMoore();
+        
+        AlgoritmoDeBusca[] algoritmos = new AlgoritmoDeBusca[]{forcaBruta, kmp, boyerMoore};
+        String[] nomes = new String[]{"Força bruta", "KMP", "Boyer Moore"};
+        
+        for (int i = 0; i < algoritmos.length; i++) {
+            for (String padrao : padroes) {
+                int qtd = 0;
+                fi = new FileIterator("entrada.txt");
+                String linha;
+                while ((linha = fi.next()) != null) {
+                    forcaBruta.buscar(padrao, linha);
+                    kmp.buscar(padrao, linha);
+                    boyerMoore.buscar(padrao, linha);
+                    qtd += algoritmos[i].getQtdComparacoes();
+                }
+                ds.addValue(qtd, nomes[i], padrao);
+            }
+        }
         return ds;
     }
 
@@ -199,8 +222,8 @@ public class TelaPrincipal extends JFrame implements ActionListener {
             BufferedReader input = new BufferedReader(reader);
             String linha;
             while ((linha = input.readLine()) != null) {
-                ja.append(linha);
-                ja.append("\n");
+                arquivoTextArea.append(linha);
+                arquivoTextArea.append("\n");
             }
             input.close();
         } catch (IOException ioe) {
