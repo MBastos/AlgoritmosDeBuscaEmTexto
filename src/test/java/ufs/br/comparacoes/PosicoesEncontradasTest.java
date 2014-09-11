@@ -46,7 +46,7 @@ public class PosicoesEncontradasTest {
 
     private List<Integer> getPosicoes(String texto, String padrao) {
         Matcher m = Pattern.compile(padrao.toLowerCase(), Pattern.DOTALL).matcher(texto.toLowerCase());
-        List<Integer> lista = new ArrayList<>();
+        List<Integer> lista = new ArrayList<Integer>();
         if (padrao.isEmpty()){
             return lista;
         }

@@ -27,22 +27,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
-import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.general.Dataset;
-import org.jfree.data.general.DefaultPieDataset;
-import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
 import ufs.br.algoritmo.AlgoritmoDeBusca;
 import ufs.br.algoritmo.BoyerMoore;
 import ufs.br.algoritmo.ForcaBruta;
@@ -56,15 +48,15 @@ import ufs.br.util.FileIterator;
  */
 public class TelaPrincipal extends JFrame implements ActionListener {
 
-    JButton carregarBtn, executarBtn;
+    JButton carregarJButton, executarJButton;
     private String diretorio;
-    JPanel jp4;
+    JPanel graficosPanel;
     JTextField carregarTextField;
     private DefaultCategoryDataset dados;
     private JFreeChart grafico;
-    ChartPanel myChartPanel = new ChartPanel(grafico, true);
+    ChartPanel chartPanel = new ChartPanel(grafico, true);
     JTextArea arquivoTextArea = new JTextArea();
-    JScrollPane jp3;
+    JScrollPane textoScrollPane;
 
     public TelaPrincipal() {
         try {
@@ -83,39 +75,39 @@ public class TelaPrincipal extends JFrame implements ActionListener {
         this.setSize(1024, 780);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setVisible(true);
-        JTabbedPane jtp = new JTabbedPane();
-        JPanel jp1 = new JPanel();
-        JPanel jp2 = new JPanel();
-        jp3 = new JScrollPane();
-        jp4 = new JPanel();
+        JTabbedPane opcoesTabbebPane = new JTabbedPane();
+        JPanel abrirArquivoJPanel = new JPanel();
+        JPanel padroesJPanel = new JPanel();
+        textoScrollPane = new JScrollPane();
+        graficosPanel = new JPanel();
+        
         geradorGrafico();
-
-        JLabel jl_carregar = new JLabel("Selecione o arquivo: ");
+        JLabel carregarJLabel = new JLabel("Selecione o arquivo: ");
         carregarTextField = new JTextField(40);
         carregarTextField.setLocale(new Locale("pt", "BR"));
-        carregarBtn = new JButton("...");
-        executarBtn = new JButton("Executar");
-        carregarBtn.addActionListener(this);
-        executarBtn.addActionListener(this);
-        jp1.setName("Abrir Arquivo");
-        jp2.setName("Padrões");
-        jp3.setName("Texto");
-        jp4.setName("Gráficos");
+        carregarJButton = new JButton("...");
+        executarJButton = new JButton("Executar");
+        carregarJButton.addActionListener(this);
+        executarJButton.addActionListener(this);
+        abrirArquivoJPanel.setName("Abrir Arquivo");
+        padroesJPanel.setName("Padrões");
+        textoScrollPane.setName("Texto");
+        graficosPanel.setName("Gráficos");
         //Eventos Aba jp1
-        jp1.add(jl_carregar);
-        jp1.add(carregarTextField);
-        jp1.add(carregarBtn);
-        jp1.add(executarBtn);
-        jp1.setLayout(layout);
-        jp1.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-        jp3.setViewportView(arquivoTextArea);
+        abrirArquivoJPanel.add(carregarJLabel);
+        abrirArquivoJPanel.add(carregarTextField);
+        abrirArquivoJPanel.add(carregarJButton);
+        abrirArquivoJPanel.add(executarJButton);
+        abrirArquivoJPanel.setLayout(layout);
+        abrirArquivoJPanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+        textoScrollPane.setViewportView(arquivoTextArea);
         arquivoTextArea.setEditable(false);
 
-        jtp.add(jp1);
-        jtp.add(jp2);
-        jtp.add(jp3);
-        jtp.add(jp4);
-        add(jtp);
+        opcoesTabbebPane.add(abrirArquivoJPanel);
+        opcoesTabbebPane.add(padroesJPanel);
+        opcoesTabbebPane.add(textoScrollPane);
+        opcoesTabbebPane.add(graficosPanel);
+        add(opcoesTabbebPane);
 
     }
 
@@ -123,9 +115,8 @@ public class TelaPrincipal extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         JFileChooser chooser;
         String nomeArq = null;
-        if (e.getSource() == carregarBtn) {
+        if (e.getSource() == carregarJButton) {
             chooser = new JFileChooser();
-
             //   chooser.showOpenDialog(this);
             if (chooser.showOpenDialog(this) == chooser.APPROVE_OPTION) {
                 File file = chooser.getSelectedFile();
@@ -135,7 +126,7 @@ public class TelaPrincipal extends JFrame implements ActionListener {
             }
 
         }
-        if (e.getSource() == executarBtn) {
+        if (e.getSource() == executarJButton) {
             if (carregarTextField.getText().trim().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Diretório Vazio!!!", null, JOptionPane.ERROR_MESSAGE);
 
@@ -167,11 +158,7 @@ public class TelaPrincipal extends JFrame implements ActionListener {
         FileIterator fi = new FileIterator("entrada.txt");
         List<String> padroes = EscolhedorDePadroes.escolher(fi);
         
-        AlgoritmoDeBusca forcaBruta = new ForcaBruta();
-        AlgoritmoDeBusca kmp = new Kmp();
-        AlgoritmoDeBusca boyerMoore = new BoyerMoore();
-        
-        AlgoritmoDeBusca[] algoritmos = new AlgoritmoDeBusca[]{forcaBruta, kmp, boyerMoore};
+        AlgoritmoDeBusca[] algoritmos = new AlgoritmoDeBusca[]{new ForcaBruta(), new Kmp(), new BoyerMoore()};
         String[] nomes = new String[]{"Força bruta", "KMP", "Boyer Moore"};
         
         for (int i = 0; i < algoritmos.length; i++) {
@@ -180,9 +167,7 @@ public class TelaPrincipal extends JFrame implements ActionListener {
                 fi = new FileIterator("entrada.txt");
                 String linha;
                 while ((linha = fi.next()) != null) {
-                    forcaBruta.buscar(padrao, linha);
-                    kmp.buscar(padrao, linha);
-                    boyerMoore.buscar(padrao, linha);
+                    algoritmos[i].buscar(padrao, linha);
                     qtd += algoritmos[i].getQtdComparacoes();
                 }
                 ds.addValue(qtd, nomes[i], padrao);
@@ -191,8 +176,7 @@ public class TelaPrincipal extends JFrame implements ActionListener {
         return ds;
     }
 
-    public void geradorGrafico() {
-
+    public final void geradorGrafico() {
         DefaultCategoryDataset cds = createDataset();
         String titulo = "Gráfico de Tipo";
         String eixoy = "Comparações";
@@ -206,16 +190,15 @@ public class TelaPrincipal extends JFrame implements ActionListener {
         renderer.setSeriesPaint(1, Color.YELLOW);
         renderer.setSeriesPaint(2, Color.blue);
         ChartPanel myChartPanel = new ChartPanel(grafico, true);
-        myChartPanel.setSize(jp4.getWidth(), jp4.getHeight());
+        myChartPanel.setSize(graficosPanel.getWidth(), graficosPanel.getHeight());
         myChartPanel.setVisible(true);
-        jp4.removeAll();
-        jp4.add(myChartPanel);
-        jp4.revalidate();
-        jp4.repaint();
+        graficosPanel.removeAll();
+        graficosPanel.add(myChartPanel);
+        graficosPanel.revalidate();
+        graficosPanel.repaint();
     }
 
     public void escreverTxt(String f) {
-
         File file = new File(f);
         try {
             FileReader reader = new FileReader(file);
