@@ -68,7 +68,7 @@ public class PosicoesEncontradasTest {
 
     @Test
     public void testarBuscasComBaseReal() {
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 20; i++) {
             FileIterator fi = new FileIterator("entrada.txt");
             List<String> padroes = EscolhedorDePadroes.escolher(fi);
             fi = new FileIterator("entrada.txt");
