@@ -14,6 +14,8 @@ public class ForcaBruta extends AlgoritmoDeBusca{
 
     @Override
     public List<Integer> buscar(String padrao, String texto) {
+        padrao = padrao.toLowerCase();
+        texto = texto.toLowerCase();
         resetQtdComparacoes();
         if (texto.isEmpty()){
             return Collections.EMPTY_LIST;

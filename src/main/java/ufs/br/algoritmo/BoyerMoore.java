@@ -13,6 +13,8 @@ public class BoyerMoore extends AlgoritmoDeBusca {
     @Override
     public List<Integer> buscar(String p, String t) {
         resetQtdComparacoes();
+        t = t.toLowerCase();
+        p = p.toLowerCase();
         char[] texto = t.toCharArray();
         char[] padrao = p.toCharArray();
         List<Integer> posicoes = new ArrayList<>();

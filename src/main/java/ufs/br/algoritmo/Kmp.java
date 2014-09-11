@@ -36,6 +36,8 @@ public class Kmp extends AlgoritmoDeBusca {
 
     @Override
     public List<Integer> buscar(String padrao, String texto) {
+        padrao = padrao.toLowerCase();
+        texto = texto.toLowerCase();
         resetQtdComparacoes();
         int n = texto.length();
         int m = padrao.length();

@@ -45,7 +45,7 @@ public class PosicoesEncontradasTest {
     }
 
     private List<Integer> getPosicoes(String texto, String padrao) {
-        Matcher m = Pattern.compile(padrao, Pattern.DOTALL).matcher(texto);
+        Matcher m = Pattern.compile(padrao.toLowerCase(), Pattern.DOTALL).matcher(texto.toLowerCase());
         List<Integer> lista = new ArrayList<>();
         if (padrao.isEmpty()){
             return lista;
@@ -67,14 +67,15 @@ public class PosicoesEncontradasTest {
     }
 
     @Test
-    public void testarBuscaComPadraoETextoVazios() {
-        for (int i = 0; i < 10; i++) {
+    public void testarBuscasComBaseReal() {
+        for (int i = 0; i < 1000; i++) {
             FileIterator fi = new FileIterator("entrada.txt");
             List<String> padroes = EscolhedorDePadroes.escolher(fi);
             fi = new FileIterator("entrada.txt");
             String linha;
             while ((linha = fi.next()) != null) {
                 for (String padrao : padroes) {
+                    System.out.println(linha + "-" + padrao);
                     testarCom(linha, padrao, getPosicoes(linha, padrao));
                 }
             }

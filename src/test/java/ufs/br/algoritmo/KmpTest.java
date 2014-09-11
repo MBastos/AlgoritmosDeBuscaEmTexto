@@ -16,30 +16,6 @@ public class KmpTest {
     public KmpTest() {
     }
 
-//    //@Test
-//    public void testarPreProcessamento() {
-//        String padrao = "ababaca";
-//        int[] resultadoCalculado = algoritmo.preProcessamento(padrao);
-//        StringBuilder sb = new StringBuilder();
-//        for (int i : resultadoCalculado) {
-//            sb.append(i).append(" ");
-//        }
-//        System.out.println(sb.toString());
-//        Assert.assertArrayEquals(new int[]{0, 0, 1, 2, 3, 0, 1}, resultadoCalculado);
-//    }
-//
-//    //@Test
-//    public void testarPreProcessamentoMaiusculasMinusculas() {
-//        String padrao = "ababaca";
-//        int[] resultadoCalculado = algoritmo.preProcessamentoLeila(padrao);
-//        StringBuilder sb = new StringBuilder();
-//        for (int i : resultadoCalculado) {
-//            sb.append(i).append(" ");
-//        }
-//        System.out.println(sb.toString());
-//        Assert.assertArrayEquals(new int[]{0, 0, 1, 2, 3, 0, 1}, resultadoCalculado);
-//    }
-
     @Test
     public void testarBuscaComPadraoETextoVazios() {
         System.out.println("KmpTest.testarBuscaComPadraoETextoVazios");

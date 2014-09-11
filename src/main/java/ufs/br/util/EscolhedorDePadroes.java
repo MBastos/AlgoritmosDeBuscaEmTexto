@@ -23,10 +23,14 @@ public class EscolhedorDePadroes {
         List<String> linhas = fileIterator.lerTodas();
         int qtdPadroes = gerador.nextInt(19) + 1;
         for (int i = 0; i < qtdPadroes; i++){
-            String linha = linhas.get(gerador.nextInt(linhas.size() - 1)); //Escolhe a linha aleatoriamente
+            String linha = linhas.get(gerador.nextInt(linhas.size() - 2) + 1); //Escolhe a linha aleatoriamente
+            //Pesquisa por outra linha se a escolhida for vazia
+            while ((linha.replaceAll(" ", "")).isEmpty()){
+                linha = linhas.get(gerador.nextInt(linhas.size() - 2) + 1);
+            }
             String[] palavras = linha.split(" ");//Gera a lista de palavras da linha
             //A busca não é case sensitive
-            lista.add(palavras[gerador.nextInt(palavras.length - 1)].toLowerCase());
+                lista.add(palavras[gerador.nextInt(palavras.length - 1)]);
         }
         return lista;
     }
