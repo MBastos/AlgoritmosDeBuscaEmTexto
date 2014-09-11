@@ -13,7 +13,6 @@ public class BoyerMoore extends AlgoritmoDeBusca {
     @Override
     public List<Integer> buscar(String p, String t) {
         resetQtdComparacoes();
-        resetQtdComparacoes();
         char[] texto = t.toCharArray();
         char[] padrao = p.toCharArray();
         List<Integer> posicoes = new ArrayList<>();
@@ -41,6 +40,7 @@ public class BoyerMoore extends AlgoritmoDeBusca {
         int tabelaDeCaracteres[] = fazTabelaDeCaracteres(padrao);
         int tabelaDeDeslocamento[] = fazTabelaDeDeslocamento(padrao);
         for (int i = padrao.length - 1, j; i < texto.length;) {
+            incQtdComparacoes();
             for (j = padrao.length - 1; padrao[j] == texto[i]; --i, --j) {
                 if (j == 0) {
                     return i;
