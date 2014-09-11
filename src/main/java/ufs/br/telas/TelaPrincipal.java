@@ -13,10 +13,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -56,7 +58,9 @@ public class TelaPrincipal extends JFrame implements ActionListener {
     private JFreeChart grafico;
     ChartPanel chartPanel = new ChartPanel(grafico, true);
     JTextArea arquivoTextArea = new JTextArea();
+    JTextArea padraoTextArea = new JTextArea();
     JScrollPane textoScrollPane;
+    JScrollPane padraoScrollPane;
 
     public TelaPrincipal() {
         try {
@@ -79,9 +83,9 @@ public class TelaPrincipal extends JFrame implements ActionListener {
         JPanel abrirArquivoJPanel = new JPanel();
         JPanel padroesJPanel = new JPanel();
         textoScrollPane = new JScrollPane();
+        padraoScrollPane = new JScrollPane();
         graficosPanel = new JPanel();
-        
-        geradorGrafico();
+        //geradorGrafico();
         JLabel carregarJLabel = new JLabel("Selecione o arquivo: ");
         carregarTextField = new JTextField(40);
         carregarTextField.setLocale(new Locale("pt", "BR"));
@@ -92,7 +96,9 @@ public class TelaPrincipal extends JFrame implements ActionListener {
         abrirArquivoJPanel.setName("Abrir Arquivo");
         padroesJPanel.setName("Padrões");
         textoScrollPane.setName("Texto");
+        padraoScrollPane.setName("Padrões");
         graficosPanel.setName("Gráficos");
+        graficosPanel.setLayout(new BoxLayout(graficosPanel, BoxLayout.Y_AXIS));
         //Eventos Aba jp1
         abrirArquivoJPanel.add(carregarJLabel);
         abrirArquivoJPanel.add(carregarTextField);
@@ -101,11 +107,12 @@ public class TelaPrincipal extends JFrame implements ActionListener {
         abrirArquivoJPanel.setLayout(layout);
         abrirArquivoJPanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         textoScrollPane.setViewportView(arquivoTextArea);
+        padraoScrollPane.setViewportView(padraoTextArea);
         arquivoTextArea.setEditable(false);
 
         opcoesTabbebPane.add(abrirArquivoJPanel);
-        opcoesTabbebPane.add(padroesJPanel);
         opcoesTabbebPane.add(textoScrollPane);
+        opcoesTabbebPane.add(padraoScrollPane);
         opcoesTabbebPane.add(graficosPanel);
         add(opcoesTabbebPane);
 
@@ -134,7 +141,7 @@ public class TelaPrincipal extends JFrame implements ActionListener {
                 setDiretorio(carregarTextField.getText());
                 escreverTxt(getDiretorio());
                 carregarTextField.setEditable(false);
-                this.repaint();
+                geradorGrafico();
             }
 
         }
@@ -155,16 +162,22 @@ public class TelaPrincipal extends JFrame implements ActionListener {
         DefaultCategoryDataset ds = new DefaultCategoryDataset();
         
         //Numero de Comparações, Método usado, Padrão Utilizado
-        FileIterator fi = new FileIterator("entrada.txt");
+        FileIterator fi = new FileIterator(getDiretorio());
         List<String> padroes = EscolhedorDePadroes.escolher(fi);
         
         AlgoritmoDeBusca[] algoritmos = new AlgoritmoDeBusca[]{new ForcaBruta(), new Kmp(), new BoyerMoore()};
         String[] nomes = new String[]{"Força bruta", "KMP", "Boyer Moore"};
-        
+        padraoTextArea.setText(null);
+        List<String> pad = new ArrayList<String>();
         for (int i = 0; i < algoritmos.length; i++) {
             for (String padrao : padroes) {
+                if (!pad.contains(padrao)){
+                    padraoTextArea.append(padrao);
+                    padraoTextArea.append("\n");
+                    pad.add(padrao);
+                }
                 int qtd = 0;
-                fi = new FileIterator("entrada.txt");
+                fi = new FileIterator(getDiretorio());
                 String linha;
                 while ((linha = fi.next()) != null) {
                     algoritmos[i].buscar(padrao, linha);
@@ -173,12 +186,13 @@ public class TelaPrincipal extends JFrame implements ActionListener {
                 ds.addValue(qtd, nomes[i], padrao);
             }
         }
+        padraoTextArea.setEditable(false);
         return ds;
     }
 
     public final void geradorGrafico() {
         DefaultCategoryDataset cds = createDataset();
-        String titulo = "Gráfico de Tipo";
+        String titulo = "Gráfico de comparações";
         String eixoy = "Comparações";
         String txt_legenda = "Padrões Encontrados";
         boolean legenda = true;
@@ -199,6 +213,7 @@ public class TelaPrincipal extends JFrame implements ActionListener {
     }
 
     public void escreverTxt(String f) {
+        arquivoTextArea.setText(null);
         File file = new File(f);
         try {
             FileReader reader = new FileReader(file);

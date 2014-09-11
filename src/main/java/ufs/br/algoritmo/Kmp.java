@@ -47,7 +47,7 @@ public class Kmp extends AlgoritmoDeBusca {
         List<Integer> listaPosicoes = new ArrayList<>();
         while (i < n) {
             incQtdComparacoes();
-            if (padrao.charAt(j) == texto.charAt(i)) {
+            if ( i < n && j < m && padrao.charAt(j) == texto.charAt(i)) {
                 if (j == m - 1) {
                     listaPosicoes.add(i - m + 1);
                 }
