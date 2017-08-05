@@ -114,6 +114,7 @@ public class BoyerMoore extends AlgoritmoDeBusca {
             tam += 1;
         }
         return tam;
+        
     }
 
 }
